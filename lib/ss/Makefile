@@ -76,15 +76,15 @@ datadir = ${datarootdir}
 
 # CHECK_CMD=@true
 
-CC = /usr/lib/ccache/gcc
-BUILD_CC = /usr/lib/ccache/gcc
-CFLAGS = -g3 -gdwarf-2
+CC = gcc
+BUILD_CC = gcc
+CFLAGS = -g -O2
 CPPFLAGS = -I. -I$(top_builddir)/lib -I$(top_srcdir)/lib
 ALL_CFLAGS = $(CPPFLAGS) $(CFLAGS)
 LDFLAGS = 
 ALL_LDFLAGS = $(LDFLAGS) 
 LDFLAGS_STATIC = $(LDFLAGS) 
-BUILD_CFLAGS = -g3 -gdwarf-2 
+BUILD_CFLAGS = -g -O2 
 BUILD_LDFLAGS = 
 RDYNAMIC = -rdynamic
 LINK_BUILD_FLAGS = 
@@ -101,7 +101,7 @@ SED = /bin/sed
 PERL = /usr/bin/perl
 RANLIB = ranlib
 STRIP = strip
-LD = $(PURE) /usr/lib/ccache/gcc
+LD = $(PURE) gcc
 ARUPD = $(AR) r
 ARGEN = $(AR) rc
 LDCONFIG = /sbin/ldconfig
@@ -199,7 +199,7 @@ WFLAGS=		-std=c99 -D_XOPEN_SOURCE=600 -D_GNU_SOURCE \
 			-UENABLE_NLS
 
 gcc-wall-new:
-	(make CFLAGS="-g3 -gdwarf-2 $(WFLAGS)" > /dev/null) 2>&1 | sed -f $(top_srcdir)/util/gcc-wall-cleanup 
+	(make CFLAGS="-g -O2 $(WFLAGS)" > /dev/null) 2>&1 | sed -f $(top_srcdir)/util/gcc-wall-cleanup 
 
 gcc-wall:
 	make clean > /dev/null
