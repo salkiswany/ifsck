@@ -100,6 +100,9 @@ void e2fsck_pass4(e2fsck_t ctx)
 	__u16	link_count, link_counted;
 	char	*buf = 0;
 	dgrp_t	group, maxgroup;
+#ifdef ICEFS
+        int group_index = 0;
+#endif // ICEFS
 
 	init_resource_track(&rtrack, ctx->fs->io);
 
@@ -128,7 +131,16 @@ void e2fsck_pass4(e2fsck_t ctx)
 		if (ctx->flags & E2F_FLAG_SIGNAL_MASK)
 			goto errout;
 		if ((i % fs->super->s_inodes_per_group) == 0) {
+#ifdef ICEFS
+                    if(group_index == fs->cube_num_of_bgroups){
+                        break;
+                    }
+                    group = fs->cube_groups_ids[group_index];
+                    group_index ++;
+                    i = group * fs->super->s_inodes_per_group;
+#else
 			group++;
+#endif // ICEFS
 			if (ctx->progress)
 				if ((ctx->progress)(ctx, 4, group, maxgroup))
 					goto errout;

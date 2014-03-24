@@ -273,6 +273,14 @@ struct struct_ext2_filsys {
 	 * Time at which e2fsck last updated the MMP block.
 	 */
 	long mmp_last_written;
+        
+#ifdef ICEFS
+        // cube to check
+        __u16   cube_id;  
+        __u32   cube_num_of_bgroups;
+        __u32*  cube_groups_ids;
+        ext2_ino_t  cube_ino;           //this cube's inode number 
+#endif // ICEFS
 };
 
 #if EXT2_FLAT_INCLUDES

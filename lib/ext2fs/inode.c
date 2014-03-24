@@ -229,10 +229,24 @@ int ext2fs_inode_scan_flags(ext2_inode_scan scan, int set_flags,
 static errcode_t get_next_blockgroup(ext2_inode_scan scan)
 {
 	ext2_filsys fs = scan->fs;
-
+#ifdef ICEFS
+        int current_gindex = 0;
+        
+        // find the index of the current group
+        for(current_gindex = 0; current_gindex < fs->cube_num_of_bgroups; current_gindex++){
+            if(scan->current_group == fs->cube_groups_ids[current_gindex]){
+                break;
+            }
+        }
+        if(current_gindex < fs->cube_num_of_bgroups){ // no more groups left
+            scan->current_group = fs->cube_groups_ids[current_gindex + 1];
+        }
+        scan->groups_left = fs->cube_num_of_bgroups - current_gindex;  
+#else
 	scan->current_group++;
 	scan->groups_left--;
-
+#endif // ICEFS
+        
 	scan->current_block = ext2fs_inode_table_loc(scan->fs,
 						     scan->current_group);
 	scan->current_inode = scan->current_group *

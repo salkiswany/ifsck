@@ -104,6 +104,12 @@ void e2fsck_pass3(e2fsck_t ctx)
 			goto abort_exit;
 		if (ctx->progress && (ctx->progress)(ctx, 3, count++, maxdirs))
 			goto abort_exit;
+#ifdef ICEFS
+                // no need to check the connectivity of the cube root
+                if(dir->ino == fs->cube_ino){
+                    continue;
+                }
+#endif //ICEFS
 		if (ext2fs_test_inode_bitmap2(ctx->inode_dir_map, dir->ino))
 			if (check_directory(ctx, dir->ino, &pctx))
 				goto abort_exit;

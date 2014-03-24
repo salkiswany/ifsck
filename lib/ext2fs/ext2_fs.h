@@ -39,6 +39,8 @@
 #define EXT2FS_DATE		"95/08/09"
 #define EXT2FS_VERSION		"0.5b"
 
+#define ICEFS
+
 /*
  * Special inode numbers
  */
@@ -155,6 +157,14 @@ struct ext2_group_desc
 	__u16	bg_free_inodes_count;	/* Free inodes count */
 	__u16	bg_used_dirs_count;	/* Directories count */
 	__u16	bg_flags;
+#ifdef ICEFS
+        __u32   bg_max_free_blocks;  /* maximal free blocks */  
+        __u16   cube_id;             /* cube id for this block group */
+        __u16   cube_flags;          /* used for cube states: valid, error, etc */
+        __u32   bg_reserved; 
+        //add padding: assume 4kb contains 8 group_desc. 
+        __u32   bg_padding[117];
+#endif  // ICEFS
 	__u32	bg_exclude_bitmap_lo;	/* Exclude bitmap for snapshots */
 	__u16	bg_block_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */
 	__u16	bg_inode_bitmap_csum_lo;/* crc32c(s_uuid+grp_num+bitmap) LSB */

@@ -1231,8 +1231,10 @@ int main (int argc, char *argv[])
 		exit(FSCK_OK);
 	}
 
+#ifndef ICEFS
 	check_mount(ctx);
-
+#endif  // !ICEFS
+        
 	if (!(ctx->options & E2F_OPT_PREEN) &&
 	    !(ctx->options & E2F_OPT_NO) &&
 	    !(ctx->options & E2F_OPT_YES)) {
@@ -1267,6 +1269,16 @@ restart:
 	}
 
 	retval = try_open_fs(ctx, flags, io_ptr, &fs);
+        
+#ifdef ICEFS
+        // get the cube id from the superblock
+        // the super block is found in fs->super
+        // for testing
+        fs->cube_id = 1;
+        fs->cube_num_of_bgroups = 2;
+        fs->cube_groups_ids = malloc(sizeof(__u32) * fs->cube_num_of_bgroups);
+        fs->cube_ino = 10;
+#endif // ICEFS
 
 	if (!ctx->superblock && !(ctx->options & E2F_OPT_PREEN) &&
 	    !(ctx->flags & E2F_FLAG_SB_SPECIFIED) &&
@@ -1467,6 +1479,9 @@ failure:
 	/*
 	 * Make sure the ext3 superblock fields are consistent.
 	 */
+#ifdef ICEFS
+        // Check the cube journal only
+#endif // ICEFS
 	retval = e2fsck_check_ext3_journal(ctx);
 	if (retval) {
 		com_err(ctx->program_name, retval,
@@ -1498,6 +1513,9 @@ failure:
 					  "on %s\n"), ctx->device_name);
 				fatal_error(ctx, 0);
 			}
+#ifdef ICEFS
+        // Check the cube journal only
+#endif // ICEFS
 			retval = e2fsck_run_ext3_journal(ctx);
 			if (retval) {
 				com_err(ctx->program_name, retval,
@@ -1579,7 +1597,10 @@ print_unsupp_features:
 	if (ctx->superblock)
 		set_latch_flags(PR_LATCH_RELOC, PRL_LATCHED, 0);
 	ext2fs_mark_valid(fs);
+        
+#ifndef ICEFS
 	check_super_block(ctx);
+#endif // !ICEFS
 	if (ctx->flags & E2F_FLAG_SIGNAL_MASK)
 		fatal_error(ctx, 0);
 	check_if_skip(ctx);

@@ -39,7 +39,11 @@ errcode_t ext2fs_check_desc(ext2_filsys fs)
 	blk64_t last_block = ext2fs_blocks_count(fs->super)-1;
 	blk64_t blk, b;
 	unsigned int j;
-
+#ifdef ICEFS
+        struct ext2_group_desc * current_group_desc;
+        int group_index = 0;
+#endif // ICEFS
+        
 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
 
 	if (EXT2_DESC_SIZE(fs->super) & (EXT2_DESC_SIZE(fs->super) - 1))
@@ -53,6 +57,16 @@ errcode_t ext2fs_check_desc(ext2_filsys fs)
 		ext2fs_reserve_super_and_bgd(fs, i, bmap);
 
 	for (i = 0; i < fs->group_desc_count; i++) {
+                
+#ifdef ICEFS
+                current_group_desc = ext2fs_group_desc(fs, fs->group_desc, i);
+                if (current_group_desc->cube_id != fs->cube_id){
+                    continue;
+                }
+                fs->cube_groups_ids[group_index] = i;
+                group_index ++;
+#endif // ICEFS
+                
 		if (!EXT2_HAS_INCOMPAT_FEATURE(fs->super,
 					       EXT4_FEATURE_INCOMPAT_FLEX_BG)) {
 			first_block = ext2fs_group_first_block2(fs, i);
