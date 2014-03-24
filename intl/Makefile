@@ -62,7 +62,7 @@ mkinstalldirs = $(SHELL) $(MKINSTALLDIRS)
 l = 
 
 AR = ar
-CC = gcc
+CC = /usr/lib/ccache/gcc
 LIBTOOL = @LIBTOOL@
 RANLIB = ranlib
 YACC = bison -y -d
@@ -75,7 +75,7 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" -DLOCALE_ALIAS_PATH=\"$(aliaspath)\" \
 -Drelocate=libintl_relocate \
 -DDEPENDS_ON_LIBICONV=1 -DHAVE_CONFIG_H
 CPPFLAGS = 
-CFLAGS = -g -O2
+CFLAGS = -g3 -gdwarf-2
 LDFLAGS = 
 LIBS = 
 
